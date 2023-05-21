@@ -36,19 +36,21 @@ async function run() {
 
     app.post("/services", async (req, res) => {
       const body = req.body;
-      const result = await servicesCollection.insertOne(body);
-      
+      const result = await servicesCollection.insertOne(body);    
       res.send(result)
     });
 
-    app.get("/email", async (req, res) => {
-      console.log(req.params.id);
-      const jobs = await servicesCollection
+    app.get("/services/:email", async (req, res) => {
+      //   console.log(req.params.email);
+      const result = await servicesCollection
         .find({
-         email: req.params.email,
+          email: req.params.email,
+        })
+        .sort({
+          price: -1
         })
         .toArray();
-      res.send(jobs);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
