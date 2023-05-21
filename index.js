@@ -45,7 +45,7 @@ async function run() {
       console.log(req.params.id);
       const jobs = await servicesCollection
         .find({
-          postedBy: req.params.email,
+         email: req.params.email,
         })
         .toArray();
       res.send(jobs);
