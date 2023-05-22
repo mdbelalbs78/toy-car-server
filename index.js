@@ -28,6 +28,12 @@ async function run() {
     await client.connect();
 
     const servicesCollection = client.db('toyCars').collection('services');
+    
+    const indexKeys = { name: 1 }; 
+    const indexOptions = { name: "services" }; 
+    const result = await servicesCollection.createIndex(indexKeys, indexOptions);
+    console.log(result);
+
     app.get('/services', async(req,res) =>{
        const cursor = servicesCollection.find();
        const result = await cursor.toArray();
@@ -40,6 +46,18 @@ async function run() {
       const result = await servicesCollection.findOne(query)
       res.send(result)
     })
+
+    app.get("/search/:text", async (req, res) => {
+      const text = req.params.text;
+      const result = await servicesCollection
+        .find({
+          $or: [
+            { name: { $regex: text, $options: "i" } },           
+          ],
+        })
+        .toArray();
+      res.send(result);
+    });
 
     app.delete('/services/:id', async(req,res) => {
       const id = req.params.id;
@@ -57,7 +75,7 @@ async function run() {
         $set:{
           price:updateData.price,
           quantity:updateData.quantity,
-          description:updateData.description,         
+          description:updateData.description,          
         }
       }
       const result = await servicesCollection.updateOne(filter,data,options)
@@ -69,9 +87,6 @@ async function run() {
       const result = await servicesCollection.insertOne(body);    
       res.send(result)
     });
-    
-
-    
 
     app.get("/servicess/:email", async (req, res) => {
       //   console.log(req.params.email);
