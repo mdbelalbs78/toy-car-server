@@ -34,11 +34,21 @@ async function run() {
        res.send(result)
     })
 
+    app.get('/services/:id',async(req,res) => {
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await servicesCollection.findOne(query)
+      res.send(result)
+    })
+
     app.post("/services", async (req, res) => {
       const body = req.body;
       const result = await servicesCollection.insertOne(body);    
       res.send(result)
     });
+    
+
+    
 
     app.get("/services/:email", async (req, res) => {
       //   console.log(req.params.email);
@@ -53,18 +63,27 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/services/:id', async(req,res) => {
-      const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
-      const options = {     
-        // Include only the `title` and `imdb` fields in the returned document
-        projection: { description: 1, price: 1,available:1, quantity: 1, name: 1,category: 1,picture: 1, seller:1,email:1 }
-      };
 
-      const result = await servicesCollection.findOne(query,options);
-      res.send(result)
+    // app.get('/services/:id',async(req,res) => {
+    //   const id = req.params.id;
+    //   console.log(id);
+    //   const query = {_id: new ObjectId(id)}
+    //   const result = await servicesCollection.findOne(query)
+    //   res.send(result)
+    // })
+
+    // app.get('/services/:id', async(req,res) => {
+    //   const id = req.params.id;
+    //   const query = {_id: new ObjectId(id)}
+    //   const options = {     
+    //     // Include only the `title` and `imdb` fields in the returned document
+    //     projection: { description: 1, price: 1,available:1, quantity: 1, name: 1,category: 1,picture: 1, seller:1,email:1 }
+    //   };
+
+    //   const result = await servicesCollection.findOne(query,options);
+    //   res.send(result)
       
-    })
+    // })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
