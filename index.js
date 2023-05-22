@@ -41,6 +41,29 @@ async function run() {
       res.send(result)
     })
 
+    app.delete('/services/:id', async(req,res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await servicesCollection.deleteOne(query)
+      res.send(result)
+    })
+
+    app.put('/services/:id', async(req,res) =>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert:true}
+      const updateData = req.body;
+      const data = {
+        $set:{
+          price:updateData.price,
+          quantity:updateData.quantity,
+          description:updateData.description,         
+        }
+      }
+      const result = await servicesCollection.updateOne(filter,data,options)
+      res.send(result)
+    })
+
     app.post("/services", async (req, res) => {
       const body = req.body;
       const result = await servicesCollection.insertOne(body);    
@@ -50,7 +73,7 @@ async function run() {
 
     
 
-    app.get("/services/:email", async (req, res) => {
+    app.get("/servicess/:email", async (req, res) => {
       //   console.log(req.params.email);
       const result = await servicesCollection
         .find({
