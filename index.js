@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const servicesCollection = client.db('toyCars').collection('services');
     
@@ -35,7 +35,7 @@ async function run() {
     console.log(result);
 
     app.get('/services', async(req,res) =>{
-       const cursor = servicesCollection.find();
+       const cursor = servicesCollection.find().limit(20);
        const result = await cursor.toArray();
        res.send(result)
     })
@@ -102,29 +102,22 @@ async function run() {
     });
 
 
-    // app.get('/services/:id',async(req,res) => {
-    //   const id = req.params.id;
-    //   console.log(id);
-    //   const query = {_id: new ObjectId(id)}
-    //   const result = await servicesCollection.findOne(query)
-    //   res.send(result)
-    // })
+    app.get("/toyCategory/:category", async (req, res) => {
+      //   console.log(req.params.email);
+      const result = await servicesCollection
+        .find({
+          
+            category: req.params.category,
+        })
+       
+        .toArray();
+      res.send(result);
+    });
 
-    // app.get('/services/:id', async(req,res) => {
-    //   const id = req.params.id;
-    //   const query = {_id: new ObjectId(id)}
-    //   const options = {     
-    //     // Include only the `title` and `imdb` fields in the returned document
-    //     projection: { description: 1, price: 1,available:1, quantity: 1, name: 1,category: 1,picture: 1, seller:1,email:1 }
-    //   };
 
-    //   const result = await servicesCollection.findOne(query,options);
-    //   res.send(result)
-      
-    // })
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
